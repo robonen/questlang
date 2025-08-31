@@ -59,10 +59,10 @@ describe('parser', () => {
 
     const nodes = ast.graph.nodes;
     expect(Object.keys(nodes)).toHaveLength(4);
-    expect(nodes.старт.nodeType).toBe('начальный');
-    expect(nodes.действие1.nodeType).toBe('действие');
-    expect(nodes.конец1.nodeType).toBe('концовка');
-    expect(nodes.конец2.nodeType).toBe('концовка');
+    expect(nodes.старт?.nodeType).toBe('начальный');
+    expect(nodes.действие1?.nodeType).toBe('действие');
+    expect(nodes.конец1?.nodeType).toBe('концовка');
+    expect(nodes.конец2?.nodeType).toBe('концовка');
   });
 
   it('should parse action node with options', () => {

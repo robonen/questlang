@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { Lexer } from '../lexer';
 import { TokenType } from '..';
+import { Lexer } from '../lexer';
 
 describe('lexer', () => {
   it('should tokenize quest keywords', () => {
@@ -8,19 +8,19 @@ describe('lexer', () => {
     const lexer = new Lexer(source);
     const tokens = lexer.tokenize();
 
-    expect(tokens[0].type).toBe(TokenType.QUEST);
-    expect(tokens[0].value).toBe('квест');
+    expect(tokens[0]?.type).toBe(TokenType.QUEST);
+    expect(tokens[0]?.value).toBe('квест');
 
-    expect(tokens[1].type).toBe(TokenType.IDENTIFIER);
-    expect(tokens[1].value).toBe('Тест');
+    expect(tokens[1]?.type).toBe(TokenType.IDENTIFIER);
+    expect(tokens[1]?.value).toBe('Тест');
 
-    expect(tokens[2].type).toBe(TokenType.SEMICOLON);
+    expect(tokens[2]?.type).toBe(TokenType.SEMICOLON);
 
-    expect(tokens[3].type).toBe(TokenType.GOAL);
-    expect(tokens[3].value).toBe('цель');
+    expect(tokens[3]?.type).toBe(TokenType.GOAL);
+    expect(tokens[3]?.value).toBe('цель');
 
-    expect(tokens[4].type).toBe(TokenType.STRING);
-    expect(tokens[4].value).toBe('Описание');
+    expect(tokens[4]?.type).toBe(TokenType.STRING);
+    expect(tokens[4]?.value).toBe('Описание');
   });
 
   it('should tokenize strings correctly', () => {
@@ -28,8 +28,8 @@ describe('lexer', () => {
     const lexer = new Lexer(source);
     const tokens = lexer.tokenize();
 
-    expect(tokens[0].type).toBe(TokenType.STRING);
-    expect(tokens[0].value).toBe('Тестовая строка с пробелами');
+    expect(tokens[0]?.type).toBe(TokenType.STRING);
+    expect(tokens[0]?.value).toBe('Тестовая строка с пробелами');
   });
 
   it('should tokenize numbers', () => {
@@ -37,11 +37,11 @@ describe('lexer', () => {
     const lexer = new Lexer(source);
     const tokens = lexer.tokenize();
 
-    expect(tokens[0].type).toBe(TokenType.NUMBER);
-    expect(tokens[0].value).toBe('42');
+    expect(tokens[0]?.type).toBe(TokenType.NUMBER);
+    expect(tokens[0]?.value).toBe('42');
 
-    expect(tokens[1].type).toBe(TokenType.NUMBER);
-    expect(tokens[1].value).toBe('3.14');
+    expect(tokens[1]?.type).toBe(TokenType.NUMBER);
+    expect(tokens[1]?.value).toBe('3.14');
   });
 
   it('should handle comments', () => {
@@ -49,10 +49,10 @@ describe('lexer', () => {
     const lexer = new Lexer(source);
     const tokens = lexer.tokenize();
 
-    expect(tokens[0].type).toBe(TokenType.COMMENT);
-    expect(tokens[0].value).toBe('// это комментарий');
+    expect(tokens[0]?.type).toBe(TokenType.COMMENT);
+    expect(tokens[0]?.value).toBe('// это комментарий');
 
-    expect(tokens[1].type).toBe(TokenType.QUEST);
+    expect(tokens[1]?.type).toBe(TokenType.QUEST);
   });
 
   it('should track line and column numbers', () => {
@@ -60,11 +60,11 @@ describe('lexer', () => {
     const lexer = new Lexer(source);
     const tokens = lexer.tokenize();
 
-    expect(tokens[0].line).toBe(1);
-    expect(tokens[0].column).toBe(1);
+    expect(tokens[0]?.line).toBe(1);
+    expect(tokens[0]?.column).toBe(1);
 
-    expect(tokens[1].line).toBe(2);
-    expect(tokens[1].column).toBe(1);
+    expect(tokens[1]?.line).toBe(2);
+    expect(tokens[1]?.column).toBe(1);
   });
 
   it('should handle all symbols', () => {
@@ -86,7 +86,7 @@ describe('lexer', () => {
     ];
 
     expectedTypes.forEach((expectedType, index) => {
-      expect(tokens[index].type).toBe(expectedType);
+      expect(tokens[index]?.type).toBe(expectedType);
     });
   });
 

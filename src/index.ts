@@ -1,7 +1,7 @@
+import type { QuestProgram } from './ast';
+import { QuestInterpreter } from './interpreter';
 import { Lexer } from './lexer';
 import { Parser } from './parser';
-import { QuestInterpreter } from './interpreter';
-import type { QuestProgram } from './ast';
 
 /**
  * Main QuestLang processor
@@ -13,7 +13,7 @@ export class QuestLang {
   public static parse(source: string): QuestProgram {
     const lexer = new Lexer(source);
     const tokens = lexer.tokenize();
-    
+
     const parser = new Parser(tokens);
     return parser.parse();
   }
@@ -33,18 +33,17 @@ export class QuestLang {
     try {
       const interpreter = this.interpret(source);
       return interpreter.validate();
-    } catch (error) {
+    }
+    catch (error) {
       return {
         isValid: false,
-        errors: [error instanceof Error ? error.message : 'Unknown parsing error']
+        errors: [error instanceof Error ? error.message : 'Unknown parsing error'],
       };
     }
   }
 }
 
-// Re-export main classes
+export * from './ast';
+export { QuestInterpreter } from './interpreter';
 export { Lexer } from './lexer';
 export { Parser } from './parser';
-export { QuestInterpreter } from './interpreter';
-export * from './ast';
-export * from './types';

@@ -1,15 +1,19 @@
 {
   "name": "questlang-interpreter",
   "version": "1.0.0",
-  "license": "MIT",
   "description": "TypeScript interpreter for QuestLang programming language",
+  "license": "MIT",
   "keywords": [
     "questlang",
     "interpreter",
     "typescript",
     "language"
   ],
-  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
   "bin": {
     "questlang": "dist/cli.js"
   },
@@ -21,19 +25,14 @@
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix"
   },
+  "dependencies": {
+    "@clack/prompts": "^0.11.0"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^5.2.1",
     "@robonen/tsconfig": "^0.0.2",
     "tsdown": "^0.14.2",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
-  },
-  "dependencies": {
-    "@clack/prompts": "^0.11.0"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/index.js"
-    }
   }
 }

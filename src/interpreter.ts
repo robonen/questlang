@@ -1,11 +1,10 @@
 import type {
-  QuestProgram,
-  GraphNode,
-  NodeDefinition,
-  InitialNode,
   ActionNode,
   EndingNode,
-  OptionChoice
+  InitialNode,
+  NodeDefinition,
+  OptionChoice,
+  QuestProgram,
 } from './ast';
 
 /**
@@ -31,9 +30,9 @@ export interface ExecutionResult {
  * Visitor interface for quest nodes
  */
 export interface QuestVisitor {
-  visitInitialNode(node: InitialNode, state: QuestState): void;
-  visitActionNode(node: ActionNode, state: QuestState): void;
-  visitEndingNode(node: EndingNode, state: QuestState): void;
+  visitInitialNode: (node: InitialNode, state: QuestState) => void;
+  visitActionNode: (node: ActionNode, state: QuestState) => void;
+  visitEndingNode: (node: EndingNode, state: QuestState) => void;
 }
 
 /**
@@ -48,7 +47,7 @@ export class QuestInterpreter {
     this.currentState = {
       currentNode: program.graph.start,
       history: [],
-      isComplete: false
+      isComplete: false,
     };
   }
 
@@ -66,7 +65,7 @@ export class QuestInterpreter {
     return {
       name: this.program.name,
       goal: this.program.goal,
-      isComplete: this.currentState.isComplete
+      isComplete: this.currentState.isComplete,
     };
   }
 
@@ -101,12 +100,12 @@ export class QuestInterpreter {
    */
   public executeChoice(choiceIndex: number): ExecutionResult {
     const currentNode = this.getCurrentNode();
-    
+
     if (!currentNode) {
       return {
         success: false,
         newState: this.currentState,
-        error: `Current node '${this.currentState.currentNode}' not found`
+        error: `Current node '${this.currentState.currentNode}' not found`,
       };
     }
 
@@ -114,7 +113,7 @@ export class QuestInterpreter {
       return {
         success: false,
         newState: this.currentState,
-        error: `Cannot execute choice on node type '${currentNode.nodeType}'`
+        error: `Cannot execute choice on node type '${currentNode.nodeType}'`,
       };
     }
 
@@ -125,11 +124,18 @@ export class QuestInterpreter {
       return {
         success: false,
         newState: this.currentState,
-        error: `Invalid choice index: ${choiceIndex}. Available choices: 0-${choices.length - 1}`
+        error: `Invalid choice index: ${choiceIndex}. Available choices: 0-${choices.length - 1}`,
       };
     }
 
     const choice = choices[choiceIndex];
+    if (!choice) {
+      return {
+        success: false,
+        newState: this.currentState,
+        error: `Choice at index ${choiceIndex} is undefined`,
+      };
+    }
     return this.moveToNode(choice.target);
   }
 
@@ -138,12 +144,12 @@ export class QuestInterpreter {
    */
   public moveToNode(nodeId: string): ExecutionResult {
     const targetNode = this.program.graph.nodes[nodeId];
-    
+
     if (!targetNode) {
       return {
         success: false,
         newState: this.currentState,
-        error: `Target node '${nodeId}' not found`
+        error: `Target node '${nodeId}' not found`,
       };
     }
 
@@ -152,14 +158,14 @@ export class QuestInterpreter {
       currentNode: nodeId,
       history: [...this.currentState.history, this.currentState.currentNode],
       isComplete: targetNode.nodeType === 'концовка',
-      endingTitle: targetNode.nodeType === 'концовка' ? (targetNode as EndingNode).title : undefined
+      endingTitle: targetNode.nodeType === 'концовка' ? (targetNode as EndingNode).title : undefined,
     };
 
     this.currentState = newState;
 
     return {
       success: true,
-      newState: { ...newState }
+      newState: { ...newState },
     };
   }
 
@@ -170,7 +176,7 @@ export class QuestInterpreter {
     this.currentState = {
       currentNode: this.program.graph.start,
       history: [],
-      isComplete: false
+      isComplete: false,
     };
   }
 
@@ -180,15 +186,15 @@ export class QuestInterpreter {
   public getAllPaths(): string[][] {
     const paths: string[][] = [];
     const visited = new Set<string>();
-    
+
     this.findPaths(this.currentState.currentNode, [this.currentState.currentNode], paths, visited);
-    
+
     return paths;
   }
 
   private findPaths(nodeId: string, currentPath: string[], allPaths: string[][], visited: Set<string>): void {
     const node = this.program.graph.nodes[nodeId];
-    
+
     if (!node || visited.has(nodeId)) {
       return;
     }
@@ -205,7 +211,8 @@ export class QuestInterpreter {
       for (const option of actionNode.options) {
         this.findPaths(option.target, [...currentPath, option.target], allPaths, new Set(visited));
       }
-    } else if (node.nodeType === 'начальный') {
+    }
+    else if (node.nodeType === 'начальный') {
       const initialNode = node as InitialNode;
       for (const transition of initialNode.transitions) {
         this.findPaths(transition, [...currentPath, transition], allPaths, new Set(visited));
@@ -234,7 +241,8 @@ export class QuestInterpreter {
             errors.push(`Node '${nodeId}' references non-existent target '${option.target}'`);
           }
         }
-      } else if (node.nodeType === 'начальный') {
+      }
+      else if (node.nodeType === 'начальный') {
         const initialNode = node as InitialNode;
         for (const transition of initialNode.transitions) {
           if (!this.program.graph.nodes[transition]) {
@@ -247,7 +255,7 @@ export class QuestInterpreter {
     // Check for unreachable nodes
     const reachable = new Set<string>();
     this.findReachableNodes(this.program.graph.start, reachable);
-    
+
     for (const nodeId of nodeIds) {
       if (!reachable.has(nodeId)) {
         errors.push(`Node '${nodeId}' is unreachable`);
@@ -256,15 +264,17 @@ export class QuestInterpreter {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
   private findReachableNodes(nodeId: string, reachable: Set<string>): void {
-    if (reachable.has(nodeId)) return;
-    
+    if (reachable.has(nodeId))
+      return;
+
     const node = this.program.graph.nodes[nodeId];
-    if (!node) return;
+    if (!node)
+      return;
 
     reachable.add(nodeId);
 
@@ -273,7 +283,8 @@ export class QuestInterpreter {
       for (const option of actionNode.options) {
         this.findReachableNodes(option.target, reachable);
       }
-    } else if (node.nodeType === 'начальный') {
+    }
+    else if (node.nodeType === 'начальный') {
       const initialNode = node as InitialNode;
       for (const transition of initialNode.transitions) {
         this.findReachableNodes(transition, reachable);

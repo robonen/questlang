@@ -8,5 +8,6 @@ export default defineConfig([
   {
     entry: 'src/cli.ts',
     noExternal: ['@clack/prompts'],
+    minify: true,
   },
 ]);

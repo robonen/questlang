@@ -170,7 +170,7 @@ describe('questInterpreter', () => {
 
     expect(paths.length).toBeGreaterThan(0);
     // Should have at least two paths (налево->победа and направо)
-    expect(paths.some(path => path.includes('победа'))).toBe(true);
-    expect(paths.some(path => path.includes('направо'))).toBe(true);
+    expect(paths.some((path: string) => path.includes('победа'))).toBe(true);
+    expect(paths.some((path: string) => path.includes('направо'))).toBe(true);
   });
 });

@@ -1,5 +1,5 @@
+import type { Token } from './ast';
 import { TokenType } from './ast';
-import type { Token, Position } from './ast';
 
 /**
  * Lexical analyzer for QuestLang
@@ -26,7 +26,7 @@ export class Lexer {
     ['название', TokenType.TITLE],
     ['начальный', TokenType.INITIAL],
     ['действие', TokenType.ACTION],
-    ['концовка', TokenType.ENDING]
+    ['концовка', TokenType.ENDING],
   ]);
 
   constructor(source: string) {
@@ -100,7 +100,8 @@ export class Lexer {
       case '/':
         if (this.match('/')) {
           this.scanComment(start, startLine, startColumn);
-        } else {
+        }
+        else {
           throw new Error(`Unexpected character: ${c} at ${startLine}:${startColumn}`);
         }
         break;
@@ -110,9 +111,11 @@ export class Lexer {
       default:
         if (this.isDigit(c)) {
           this.scanNumber(start, startLine, startColumn);
-        } else if (this.isAlpha(c)) {
+        }
+        else if (this.isAlpha(c)) {
           this.scanIdentifier(start, startLine, startColumn);
-        } else {
+        }
+        else {
           throw new Error(`Unexpected character: ${c} at ${startLine}:${startColumn}`);
         }
         break;
@@ -182,7 +185,7 @@ export class Lexer {
       line: line || this.line,
       column: column || this.column,
       start: start || this.position,
-      end: this.position
+      end: this.position,
     });
   }
 
@@ -194,20 +197,24 @@ export class Lexer {
   }
 
   private match(expected: string): boolean {
-    if (this.isAtEnd()) return false;
-    if (this.source.charAt(this.position) !== expected) return false;
+    if (this.isAtEnd())
+      return false;
+    if (this.source.charAt(this.position) !== expected)
+      return false;
     this.position++;
     this.column++;
     return true;
   }
 
   private peek(): string {
-    if (this.isAtEnd()) return '\0';
+    if (this.isAtEnd())
+      return '\0';
     return this.source.charAt(this.position);
   }
 
   private peekNext(): string {
-    if (this.position + 1 >= this.source.length) return '\0';
+    if (this.position + 1 >= this.source.length)
+      return '\0';
     return this.source.charAt(this.position + 1);
   }
 
@@ -220,12 +227,12 @@ export class Lexer {
   }
 
   private isAlpha(c: string): boolean {
-    return (c >= 'a' && c <= 'z') ||
-           (c >= 'A' && c <= 'Z') ||
-           (c >= 'а' && c <= 'я') ||
-           (c >= 'А' && c <= 'Я') ||
-           c === 'ё' || c === 'Ё' ||
-           c === '_';
+    return (c >= 'a' && c <= 'z')
+      || (c >= 'A' && c <= 'Z')
+      || (c >= 'а' && c <= 'я')
+      || (c >= 'А' && c <= 'Я')
+      || c === 'ё' || c === 'Ё'
+      || c === '_';
   }
 
   private isAlphaNumeric(c: string): boolean {

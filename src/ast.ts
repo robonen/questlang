@@ -6,7 +6,7 @@ export enum TokenType {
   IDENTIFIER = 'IDENTIFIER',
   STRING = 'STRING',
   NUMBER = 'NUMBER',
-  
+
   // Keywords
   QUEST = 'квест',
   GOAL = 'цель',
@@ -19,12 +19,12 @@ export enum TokenType {
   TRANSITIONS = 'переходы',
   OPTIONS = 'варианты',
   TITLE = 'название',
-  
+
   // Node types
   INITIAL = 'начальный',
   ACTION = 'действие',
   ENDING = 'концовка',
-  
+
   // Symbols
   SEMICOLON = ';',
   COLON = ':',
@@ -36,12 +36,12 @@ export enum TokenType {
   RIGHT_BRACKET = ']',
   LEFT_PAREN = '(',
   RIGHT_PAREN = ')',
-  
+
   // Special
   EOF = 'EOF',
   NEWLINE = 'NEWLINE',
   COMMENT = 'COMMENT',
-  WHITESPACE = 'WHITESPACE'
+  WHITESPACE = 'WHITESPACE',
 }
 
 /**

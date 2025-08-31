@@ -138,6 +138,6 @@ describe('questLang Integration', () => {
     interpreter.moveToNode('выбор_пути');
     const choices = interpreter.getAvailableChoices();
     expect(choices).toHaveLength(3);
-    expect(choices[0].text).toBe('Пойти в дешёвую шашлычную');
+    expect(choices[0]?.text).toBe('Пойти в дешёвую шашлычную');
   });
 });

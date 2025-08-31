@@ -11,9 +11,5 @@ export default antfu(
       },
     },
     typescript: true,
-    rules: {
-      'unused-imports/no-unused-imports': 'error',
-      'unused-imports/no-unused-vars': 'error',
-    }
   },
 );
