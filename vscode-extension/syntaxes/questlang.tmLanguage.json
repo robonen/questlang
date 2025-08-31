@@ -1,0 +1,205 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "QuestLang",
+  "scopeName": "source.questlang",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#quest-declaration"
+    },
+    {
+      "include": "#goal-declaration"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#node-identifiers"
+    },
+    {
+      "include": "#identifiers"
+    },
+    {
+      "include": "#punctuation"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.questlang",
+          "begin": "//",
+          "end": "$",
+          "captures": {
+            "0": {
+              "name": "punctuation.definition.comment.questlang"
+            }
+          }
+        }
+      ]
+    },
+    "quest-declaration": {
+      "patterns": [
+        {
+          "match": "(квест)\\s+([а-яёА-ЯЁa-zA-Z_][а-яёА-ЯЁa-zA-Z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "keyword.control.quest.questlang"
+            },
+            "2": {
+              "name": "entity.name.type.quest.questlang"
+            }
+          }
+        }
+      ]
+    },
+    "goal-declaration": {
+      "patterns": [
+        {
+          "begin": "(цель)\\s+(\")",
+          "end": "\"",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.goal.questlang"
+            },
+            "2": {
+              "name": "punctuation.definition.string.begin.questlang"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.questlang"
+            }
+          },
+          "contentName": "string.quoted.double.goal.questlang",
+          "patterns": [
+            {
+              "name": "constant.character.escape.questlang",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.structure.questlang",
+          "match": "\\b(граф|узлы|начало|конец)\\b"
+        },
+        {
+          "name": "keyword.other.property.questlang",
+          "match": "\\b(тип|описание|переходы|варианты|название)\\b"
+        },
+        {
+          "name": "keyword.type.node.questlang",
+          "match": "\\b(начальный|действие|концовка)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.questlang",
+          "begin": "\"",
+          "end": "\"",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.begin.questlang"
+            }
+          },
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.questlang"
+            }
+          },
+          "patterns": [
+            {
+              "name": "constant.character.escape.questlang",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.decimal.questlang",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "node-identifiers": {
+      "patterns": [
+        {
+          "match": "([а-яёА-ЯЁa-zA-Z_][а-яёА-ЯЁa-zA-Z0-9_]*)(:)",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.node.questlang"
+            },
+            "2": {
+              "name": "punctuation.separator.colon.questlang"
+            }
+          }
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.questlang",
+          "match": "\\b[а-яёА-ЯЁ_][а-яёА-ЯЁ0-9_]*\\b"
+        },
+        {
+          "name": "variable.other.questlang",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    },
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.terminator.statement.questlang",
+          "match": ";"
+        },
+        {
+          "name": "punctuation.separator.comma.questlang",
+          "match": ","
+        },
+        {
+          "name": "punctuation.section.braces.begin.questlang",
+          "match": "\\{"
+        },
+        {
+          "name": "punctuation.section.braces.end.questlang",
+          "match": "\\}"
+        },
+        {
+          "name": "punctuation.section.brackets.begin.questlang",
+          "match": "\\["
+        },
+        {
+          "name": "punctuation.section.brackets.end.questlang",
+          "match": "\\]"
+        },
+        {
+          "name": "punctuation.section.parens.begin.questlang",
+          "match": "\\("
+        },
+        {
+          "name": "punctuation.section.parens.end.questlang",
+          "match": "\\)"
+        }
+      ]
+    }
+  }
+}

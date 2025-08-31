@@ -14,14 +14,14 @@ A modern TypeScript interpreter for the QuestLang programming language - a domai
 ## Installation
 
 ```bash
-npm install questlang-interpreter
+npm install questlang
 ```
 
 Or for development:
 
 ```bash
 git clone <repo-url>
-cd questlang-interpreter
+cd questlang
 npm install
 ```
 
@@ -36,37 +36,17 @@ QuestLang comes with two CLI variants:
 # Play a quest
 questlang play quest.ql
 
-# Validate quest syntax and structure  
+# Validate quest syntax and structure
 questlang validate quest.ql
 
 # Analyze quest structure and show statistics
 questlang analyze quest.ql
 ```
 
-#### Enhanced Clack CLI (Beautiful Interactive Interface)
-```bash
-# Interactive mode with file picker and beautiful prompts
-questlang-clack
-
-# Direct commands with enhanced visual output
-questlang-clack play quest.ql
-questlang-clack validate quest.ql  
-questlang-clack analyze quest.ql
-```
-
-The clack CLI features:
-- 🎨 Beautiful colored prompts with icons
-- 📊 Enhanced visual output 
-- ⏳ Loading spinners
-- 🎯 Interactive file selection
-- 🔄 "Play again" functionality
-
-See [CLI_GUIDE.md](./CLI_GUIDE.md) for detailed comparison.
-
 ### Programmatic API
 
 ```typescript
-import { QuestLang } from 'questlang-interpreter';
+import { QuestLang } from 'questlang';
 
 // Parse quest source code
 const ast = QuestLang.parse(sourceCode);
@@ -76,7 +56,7 @@ const interpreter = QuestLang.interpret(sourceCode);
 
 // Get quest information
 const questInfo = interpreter.getQuestInfo();
-console.log(`Playing: \${questInfo.name}`);
+console.log(`Playing: ${questInfo.name}`);
 
 // Navigate through the quest
 const currentNode = interpreter.getCurrentNode();
@@ -107,7 +87,7 @@ QuestLang uses a declarative graph-based syntax for defining interactive quests:
       описание: "You stand before an ancient castle";
       переходы: [entrance];
     }
-    
+
     entrance: {
       тип: действие;
       описание: "There are two doors. Which do you choose?";
@@ -116,20 +96,20 @@ QuestLang uses a declarative graph-based syntax for defining interactive quests:
         ("Enter the right door", right_room)
       ];
     }
-    
+
     left_room: {
       тип: концовка;
       название: "Victory!";
       описание: "You found the treasure!";
     }
-    
+
     right_room: {
       тип: концовка;
       название: "Defeat";
       описание: "You fell into a trap";
     }
   }
-  
+
   начало: старт;
 }
 конец;
@@ -166,7 +146,7 @@ The interpreter follows best practices for language implementation:
 - Handles Russian keywords and identifiers
 - Provides detailed position information for error reporting
 
-### 2. Syntax Analysis (Parser) 
+### 2. Syntax Analysis (Parser)
 - Builds Abstract Syntax Tree (AST) from tokens
 - Implements recursive descent parsing
 - Comprehensive error handling with meaningful messages
@@ -180,54 +160,6 @@ The interpreter follows best practices for language implementation:
 - Interactive quest player
 - Validation and analysis tools
 - Development utilities
-
-## Development
-
-```bash
-# Install dependencies
-npm install
-
-# Run tests
-npm test
-
-# Run tests with coverage
-npm run coverage
-
-# Type check
-npm run type-check
-
-# Lint code
-npm run lint
-
-# Format code
-npm run format
-
-# Build for production
-npm run build
-
-# Development mode
-npm run dev quest.ql
-```
-
-## Testing
-
-The project uses Vitest for testing with comprehensive coverage:
-
-```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm run test
-
-# Generate coverage report
-npm run coverage
-```
-
-Test categories:
-- **Unit Tests**: Lexer, Parser, Interpreter components
-- **Integration Tests**: Full quest parsing and execution
-- **Example Tests**: Real quest scenarios
 
 ## Project Structure
 
@@ -246,16 +178,6 @@ src/
     ├── interpreter.test.ts
     └── integration.test.ts
 ```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: \`git checkout -b feature/amazing-feature\`
-3. Make your changes and add tests
-4. Run the test suite: \`npm test\`
-5. Commit your changes: \`git commit -m 'Add amazing feature'\`
-6. Push to the branch: \`git push origin feature/amazing-feature\`
-7. Open a Pull Request
 
 ## License
 

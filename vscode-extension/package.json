@@ -1,0 +1,46 @@
+{
+  "publisher": "questlang",
+  "name": "questlang-syntax",
+  "displayName": "QuestLang Syntax Highlighting",
+  "version": "1.0.0",
+  "description": "Syntax highlighting for QuestLang - a domain-specific language for interactive quests",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/robonen/questlang.git"
+  },
+  "keywords": [
+    "questlang",
+    "quest",
+    "syntax highlighting",
+    "dsl"
+  ],
+  "categories": [
+    "Programming Languages"
+  ],
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "questlang",
+        "aliases": [
+          "QuestLang",
+          "questlang"
+        ],
+        "extensions": [
+          ".ql"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "questlang",
+        "scopeName": "source.questlang",
+        "path": "./syntaxes/questlang.tmLanguage.json"
+      }
+    ]
+  }
+}
