@@ -55,13 +55,6 @@ VS Code extension for syntax highlighting of QuestLang - a specialized language 
 конец;
 ```
 
-## Installation
-
-1. Open VS Code
-2. Go to Extensions (Ctrl+Shift+X)
-3. Search for "QuestLang Syntax Highlighting"
-4. Click Install
-
 ## Usage
 
 After installing the extension, all files with `.ql` extension will be automatically recognized as QuestLang files with syntax highlighting.
