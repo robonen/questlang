@@ -22,8 +22,9 @@
     "dev": "vitest",
     "test": "vitest",
     "coverage": "vitest --coverage",
-    "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix"
+    "lint:check": "eslint ./src",
+    "lint:fix": "eslint ./src --fix",
+    "type:check": "tsc --noEmit"
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0"
