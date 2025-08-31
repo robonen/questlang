@@ -90,7 +90,7 @@ After installation, verify that the extension is working:
    ```questlang
    квест TestQuest;
        цель "Test quest";
-   
+
    граф {
        узлы {
            старт: {
@@ -99,7 +99,7 @@ After installation, verify that the extension is working:
            }
        }
    }
-   
+
    конец;
    ```
 
