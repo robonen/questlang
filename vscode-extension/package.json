@@ -19,7 +19,7 @@
     "Programming Languages"
   ],
   "engines": {
-    "vscode": "^1.103.2"
+    "vscode": "^1.999.0"
   },
   "contributes": {
     "languages": [

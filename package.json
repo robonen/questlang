@@ -32,8 +32,8 @@
   "devDependencies": {
     "@antfu/eslint-config": "^6.0.0",
     "@robonen/tsconfig": "^0.0.2",
-    "tsdown": "^0.14.2",
-    "typescript": "^5.9.2",
+    "tsdown": "^0.15.9",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.1"
   }
 }
