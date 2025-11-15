@@ -1,7 +1,7 @@
 {
   "name": "@robonen/questlang",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "TypeScript interpreter for QuestLang programming language",
   "license": "MIT",
   "keywords": [
