@@ -38,10 +38,10 @@
     "@clack/prompts": "^0.11.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^6.0.0",
+    "@antfu/eslint-config": "^6.2.0",
     "@robonen/tsconfig": "^0.0.2",
-    "tsdown": "^0.15.9",
+    "tsdown": "^0.16.4",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.1"
+    "vitest": "^4.0.9"
   }
 }
