@@ -34,10 +34,8 @@
     "type:check": "tsc --noEmit",
     "prepublish": "pnpm run build && pnpm run type:check && pnpm run test"
   },
-  "dependencies": {
-    "@clack/prompts": "^0.11.0"
-  },
   "devDependencies": {
+    "@clack/prompts": "^0.11.0",
     "@antfu/eslint-config": "^6.2.0",
     "@robonen/tsconfig": "^0.0.2",
     "tsdown": "^0.16.4",
