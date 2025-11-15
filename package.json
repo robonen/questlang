@@ -1,7 +1,7 @@
 {
   "name": "@robonen/questlang",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "TypeScript interpreter for QuestLang programming language",
   "license": "MIT",
   "keywords": [
@@ -17,7 +17,7 @@
     }
   },
   "bin": {
-    "questlang": "dist/cli.js"
+    "questlang": "dist/cli.mjs"
   },
   "files": [
     "README.md",
