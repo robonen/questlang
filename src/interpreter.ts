@@ -6,8 +6,8 @@ import type {
   OptionChoice,
   QuestProgram,
 } from './ast';
-import path from 'node:path';
 import { ModuleLoader } from './module-loader';
+import type { ModuleHost } from './module-loader';
 
 /**
  * Runtime state of the quest
@@ -45,7 +45,7 @@ export class QuestInterpreter {
   private currentState: QuestState;
   private moduleLoader?: ModuleLoader;
 
-  constructor(program: QuestProgram, questFilePath?: string) {
+  constructor(program: QuestProgram, questFilePath?: string, host?: ModuleHost) {
     this.program = program;
     this.currentState = {
       currentNode: program.graph.start,
@@ -54,8 +54,8 @@ export class QuestInterpreter {
     };
 
     // Initialize module loader if imports present and quest file path provided
-    if (questFilePath && program.imports && program.imports.length > 0) {
-      this.moduleLoader = new ModuleLoader(path.dirname(questFilePath));
+    if (questFilePath && host && program.imports && program.imports.length > 0) {
+      this.moduleLoader = new ModuleLoader(host);
       // Load modules
       this.moduleLoader.loadQuest(questFilePath);
     }

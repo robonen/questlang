@@ -1,5 +1,6 @@
 import type { QuestProgram } from './ast';
 import { QuestInterpreter } from './interpreter';
+import type { ModuleHost } from './module-loader';
 import { Lexer } from './lexer';
 import { Parser } from './parser';
 
@@ -21,17 +22,17 @@ export class QuestLang {
   /**
    * Create interpreter from source code
    */
-  public static interpret(source: string, filePath?: string): QuestInterpreter {
+  public static interpret(source: string, filePath?: string, host?: ModuleHost): QuestInterpreter {
     const ast = this.parse(source);
-    return new QuestInterpreter(ast, filePath);
+    return new QuestInterpreter(ast, filePath, host);
   }
 
   /**
    * Validate QuestLang source code
    */
-  public static validate(source: string, filePath?: string): { isValid: boolean; errors: string[] } {
+  public static validate(source: string, filePath?: string, host?: ModuleHost): { isValid: boolean; errors: string[] } {
     try {
-      const interpreter = this.interpret(source, filePath);
+      const interpreter = this.interpret(source, filePath, host);
       return interpreter.validate();
     }
     catch (error) {
@@ -45,5 +46,6 @@ export class QuestLang {
 
 export * from './ast';
 export { QuestInterpreter } from './interpreter';
+export type { ModuleHost } from './module-loader';
 export { Lexer } from './lexer';
 export { Parser } from './parser';

@@ -54,7 +54,11 @@ describe('module system', () => {
     `;
     fs.writeFileSync(questPath, quest);
 
-    const interpreter = QuestLang.interpret(quest, questPath);
+    const host = {
+      readFile: (file: string) => fs.readFileSync(file, 'utf8'),
+      resolve: (fromFile: string, spec: string) => path.resolve(path.dirname(fromFile), spec),
+    } as const;
+    const interpreter = QuestLang.interpret(quest, questPath, host);
     const validation = interpreter.validate();
     expect(validation.isValid).toBe(true);
   });
@@ -100,7 +104,11 @@ describe('module system', () => {
       конец;
     `);
 
-    const interpreter = QuestLang.interpret(fs.readFileSync(qPath, 'utf8'), qPath);
+    const host = {
+      readFile: (file: string) => fs.readFileSync(file, 'utf8'),
+      resolve: (fromFile: string, spec: string) => path.resolve(path.dirname(fromFile), spec),
+    } as const;
+    const interpreter = QuestLang.interpret(fs.readFileSync(qPath, 'utf8'), qPath, host);
     const validation = interpreter.validate();
     expect(validation.isValid).toBe(true);
   });
@@ -133,7 +141,11 @@ describe('module system', () => {
     `;
     fs.writeFileSync(questPath, quest);
 
-    const interpreter = QuestLang.interpret(quest, questPath);
+    const host = {
+      readFile: (file: string) => fs.readFileSync(file, 'utf8'),
+      resolve: (fromFile: string, spec: string) => path.resolve(path.dirname(fromFile), spec),
+    } as const;
+    const interpreter = QuestLang.interpret(quest, questPath, host);
     const validation = interpreter.validate();
     expect(validation.isValid).toBe(false);
     expect(validation.errors.some(e => e.includes('non-existent') || e.includes('not exported'))).toBe(true);

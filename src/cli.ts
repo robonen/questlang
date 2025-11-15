@@ -3,6 +3,7 @@
 import type { QuestInterpreter } from '.';
 import type { InitialNode, NodeDefinition } from './ast.js';
 import fs from 'node:fs';
+import path from 'node:path';
 import process from 'node:process';
 import * as p from '@clack/prompts';
 import { QuestLang } from '.';
@@ -122,7 +123,11 @@ class ClackCLI {
       spinner.start('Loading quest...');
 
       const source = this.readFile(filename);
-      const interpreter = QuestLang.interpret(source, filename);
+      const host = {
+        readFile: (file: string) => fs.readFileSync(file, 'utf8'),
+        resolve: (fromFile: string, spec: string) => path.resolve(path.dirname(fromFile), spec),
+      } as const;
+      const interpreter = QuestLang.interpret(source, filename, host);
 
       // Validate first
       const validation = interpreter.validate();
@@ -237,7 +242,11 @@ class ClackCLI {
       spinner.start('Validating quest...');
 
       const source = this.readFile(filename);
-      const validation = QuestLang.validate(source, filename);
+      const host = {
+        readFile: (file: string) => fs.readFileSync(file, 'utf8'),
+        resolve: (fromFile: string, spec: string) => path.resolve(path.dirname(fromFile), spec),
+      } as const;
+      const validation = QuestLang.validate(source, filename, host);
 
       if (validation.isValid) {
         spinner.stop('✅ Validation completed');
@@ -268,7 +277,11 @@ class ClackCLI {
       spinner.start('Analyzing quest...');
 
       const source = this.readFile(filename);
-      const interpreter = QuestLang.interpret(source, filename);
+      const host = {
+        readFile: (file: string) => fs.readFileSync(file, 'utf8'),
+        resolve: (fromFile: string, spec: string) => path.resolve(path.dirname(fromFile), spec),
+      } as const;
+      const interpreter = QuestLang.interpret(source, filename, host);
       const questInfo = interpreter.getQuestInfo();
 
       spinner.stop('✅ Analysis completed');

@@ -1,8 +1,11 @@
 import type { ImportNode, ModuleNode, QuestProgram } from './ast';
-import fs from 'node:fs';
-import path from 'node:path';
 import { Lexer } from './lexer';
 import { Parser } from './parser';
+
+export interface ModuleHost {
+  readFile(file: string): string;
+  resolve(fromFile: string, specifier: string): string;
+}
 
 export enum VisitState {
   Unvisited,
@@ -23,17 +26,17 @@ export class ModuleLoader {
   private byFile = new Map<string, LoadedModule>();
   private visit = new Map<string, VisitState>();
 
-  constructor(private baseDir: string) {}
+  constructor(private host: ModuleHost) {}
 
   public loadQuest(questFile: string): { program: QuestProgram; modules: LoadedModule[] } {
-    const source = fs.readFileSync(questFile, 'utf8');
+    const source = this.host.readFile(questFile);
     const program = this.parseQuest(source);
 
     // Parse imports (if any)
     const imports: ImportNode[] = program.imports || [];
 
     for (const imp of imports) {
-      const abs = path.resolve(path.dirname(questFile), imp.modulePath);
+      const abs = this.host.resolve(questFile, imp.modulePath);
       this.dfsParse(abs);
     }
 
@@ -52,14 +55,14 @@ export class ModuleLoader {
     this.visit.set(file, VisitState.Visiting);
 
     if (!this.byFile.has(file)) {
-      const src = fs.readFileSync(file, 'utf8');
+      const src = this.host.readFile(file);
       const ast = this.parseModule(src, file);
       this.byFile.set(file, { name: ast.name, file, ast });
 
       // Follow module's own imports (if any)
       const ownImports = ast.imports || [];
       for (const imp of ownImports) {
-        const dep = path.resolve(path.dirname(file), imp.modulePath);
+        const dep = this.host.resolve(file, imp.modulePath);
         this.dfsParse(dep);
       }
     }
