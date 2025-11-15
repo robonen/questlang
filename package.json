@@ -20,7 +20,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "vitest",
-    "test": "vitest",
+    "test": "vitest test",
     "coverage": "vitest --coverage",
     "lint:check": "eslint ./src",
     "lint:fix": "eslint ./src --fix",

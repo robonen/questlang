@@ -24,6 +24,11 @@ export class Lexer {
     ['переходы', TokenType.TRANSITIONS],
     ['варианты', TokenType.OPTIONS],
     ['название', TokenType.TITLE],
+    // Module system
+    ['модуль', TokenType.MODULE],
+    ['импорт', TokenType.IMPORT],
+    ['экспорт', TokenType.EXPORT],
+    ['из', TokenType.FROM],
     ['начальный', TokenType.INITIAL],
     ['действие', TokenType.ACTION],
     ['концовка', TokenType.ENDING],
@@ -78,6 +83,9 @@ export class Lexer {
         break;
       case '.':
         this.addToken(TokenType.DOT, c, start, startLine, startColumn);
+        break;
+      case '@':
+        this.addToken(TokenType.AT, c, start, startLine, startColumn);
         break;
       case '{':
         this.addToken(TokenType.LEFT_BRACE, c, start, startLine, startColumn);

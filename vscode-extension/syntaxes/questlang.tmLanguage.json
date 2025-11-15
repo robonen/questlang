@@ -7,6 +7,12 @@
       "include": "#comments"
     },
     {
+      "include": "#module-declaration"
+    },
+    {
+      "include": "#import-declaration"
+    },
+    {
       "include": "#quest-declaration"
     },
     {
@@ -28,10 +34,41 @@
       "include": "#identifiers"
     },
     {
+      "include": "#module-reference"
+    },
+    {
       "include": "#punctuation"
     }
   ],
   "repository": {
+    "module-declaration": {
+      "patterns": [
+        {
+          "match": "(модуль)\\s+([а-яёА-ЯЁa-zA-Z_][а-яёА-ЯЁa-zA-Z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.control.module.questlang" },
+            "2": { "name": "entity.name.namespace.module.questlang" }
+          }
+        }
+      ]
+    },
+    "import-declaration": {
+      "patterns": [
+        {
+          "begin": "(импорт)\\s+([а-яёА-ЯЁa-zA-Z_][а-яёА-ЯЁa-zA-Z0-9_]*)\\s+(из)\\s+(\")",
+          "end": "\"",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.import.questlang" },
+            "2": { "name": "entity.name.namespace.import.questlang" },
+            "3": { "name": "keyword.control.from.questlang" },
+            "4": { "name": "punctuation.definition.string.begin.questlang" }
+          },
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end.questlang" } },
+          "contentName": "string.quoted.double.path.questlang",
+          "patterns": [{ "match": "\\\\.", "name": "constant.character.escape.questlang" }]
+        }
+      ]
+    },
     "comments": {
       "patterns": [
         {
@@ -93,7 +130,7 @@
       "patterns": [
         {
           "name": "keyword.control.structure.questlang",
-          "match": "\\b(граф|узлы|начало|конец)\\b"
+          "match": "\\b(граф|узлы|начало|конец|модуль|импорт|экспорт|из)\\b"
         },
         {
           "name": "keyword.other.property.questlang",
@@ -102,6 +139,14 @@
         {
           "name": "keyword.type.node.questlang",
           "match": "\\b(начальный|действие|концовка)\\b"
+        }
+      ]
+    },
+    "module-reference": {
+      "patterns": [
+        {
+          "name": "support.type.module.reference.questlang",
+          "match": "@([а-яёА-ЯЁa-zA-Z_][а-яёА-ЯЁa-zA-Z0-9_]*)\\.([а-яёА-ЯЁa-zA-Z_][а-яёА-ЯЁa-zA-Z0-9_]*)"
         }
       ]
     },

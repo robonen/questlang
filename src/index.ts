@@ -21,17 +21,17 @@ export class QuestLang {
   /**
    * Create interpreter from source code
    */
-  public static interpret(source: string): QuestInterpreter {
+  public static interpret(source: string, filePath?: string): QuestInterpreter {
     const ast = this.parse(source);
-    return new QuestInterpreter(ast);
+    return new QuestInterpreter(ast, filePath);
   }
 
   /**
    * Validate QuestLang source code
    */
-  public static validate(source: string): { isValid: boolean; errors: string[] } {
+  public static validate(source: string, filePath?: string): { isValid: boolean; errors: string[] } {
     try {
-      const interpreter = this.interpret(source);
+      const interpreter = this.interpret(source, filePath);
       return interpreter.validate();
     }
     catch (error) {

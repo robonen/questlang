@@ -1,4 +1,4 @@
-import type { ActionNode, EndingNode, GraphNode, InitialNode, NodeDefinition, OptionChoice, QuestProgram, Token } from './ast';
+import type { ActionNode, EndingNode, GraphNode, ImportNode, InitialNode, ModuleNode, NodeDefinition, OptionChoice, QuestProgram, Token } from './ast';
 import { TokenType } from './ast';
 
 /**
@@ -17,9 +17,19 @@ export class Parser {
   }
 
   /**
-   * Parse the entire program
+   * Parse the entire program strictly as a quest (backward compatibility for existing API)
    */
   public parse(): QuestProgram {
+    return this.parseQuest();
+  }
+
+  /**
+   * Parse either a module or a quest program.
+   */
+  public parseAny(): QuestProgram | ModuleNode {
+    if (this.check(TokenType.MODULE)) {
+      return this.parseModule();
+    }
     return this.parseQuest();
   }
 
@@ -29,6 +39,7 @@ export class Parser {
     this.consume(TokenType.SEMICOLON, 'Expected \';\' after quest name');
 
     const goal = this.parseGoal();
+    const imports = this.parseImports();
     const graph = this.parseGraph();
 
     this.consume(TokenType.END, 'Expected \'конец\'');
@@ -39,9 +50,54 @@ export class Parser {
       name,
       goal,
       graph,
+      // Only attach if there were imports to preserve older shape
+      ...(imports.length > 0 ? { imports } : {}),
       line: questToken.line,
       column: questToken.column,
     };
+  }
+
+  private parseModule(): ModuleNode {
+    const moduleToken = this.consume(TokenType.MODULE, 'Expected \'модуль\'');
+    const name = this.consume(TokenType.IDENTIFIER, 'Expected module name').value;
+    this.consume(TokenType.SEMICOLON, 'Expected \';\' after module name');
+
+    const nodes: Record<string, NodeDefinition> = {};
+    let exports: string[] = [];
+    const imports: ImportNode[] = [];
+
+    // Module body: allow 'узлы { ... }' and optional 'экспорт [..];' in any order
+    while (!this.isAtEnd()) {
+      if (this.match(TokenType.IMPORT)) {
+        // Rewind one token back because parseImports expects current to be on IMPORT
+        this.current--;
+        const more = this.parseImports();
+        imports.push(...more);
+      }
+      else if (this.match(TokenType.NODES)) {
+        this.parseNodes(nodes);
+      }
+      else if (this.match(TokenType.EXPORT)) {
+        exports = this.parseExports();
+      }
+      else if (this.check(TokenType.EOF)) {
+        break;
+      }
+      else {
+        // Unknown token — be explicit
+        throw new Error(`Unexpected token in module: ${this.peek().type} at ${this.peek().line}:${this.peek().column}`);
+      }
+    }
+
+    return {
+      type: 'Module',
+      name,
+      nodes,
+      exports,
+      ...(imports.length > 0 ? { imports } : {}),
+      line: moduleToken.line,
+      column: moduleToken.column,
+    } as ModuleNode;
   }
 
   private parseGoal(): string {
@@ -185,7 +241,7 @@ export class Parser {
 
     if (!this.check(TokenType.RIGHT_BRACKET)) {
       do {
-        const transition = this.consume(TokenType.IDENTIFIER, 'Expected transition identifier').value;
+        const transition = this.parseTargetString();
         transitions.push(transition);
       } while (this.match(TokenType.COMMA));
     }
@@ -203,7 +259,7 @@ export class Parser {
         this.consume(TokenType.LEFT_PAREN, 'Expected \'(\' for option');
         const text = this.consume(TokenType.STRING, 'Expected option text').value;
         this.consume(TokenType.COMMA, 'Expected \',\' in option');
-        const target = this.consume(TokenType.IDENTIFIER, 'Expected target identifier').value;
+        const target = this.parseTargetString();
         this.consume(TokenType.RIGHT_PAREN, 'Expected \')\' after option');
 
         options.push({
@@ -260,5 +316,68 @@ export class Parser {
 
     const current = this.peek();
     throw new Error(`${message}. Got ${current.type} at ${current.line}:${current.column}`);
+  }
+
+  /**
+   * Parse zero or more import declarations appearing before the graph.
+   */
+  private parseImports(): ImportNode[] {
+    const imports: ImportNode[] = [];
+
+    while (this.match(TokenType.IMPORT)) {
+      const importTok = this.previous();
+      const moduleName = this.consume(TokenType.IDENTIFIER, 'Expected module name').value;
+
+      // Optional alias syntax: <name> как <alias> (not implemented now)
+
+      this.consume(TokenType.FROM, 'Expected \'из\'');
+      const modulePathTok = this.consume(TokenType.STRING, 'Expected module path');
+      this.consume(TokenType.SEMICOLON, 'Expected \';\' after import');
+
+      imports.push({
+        type: 'Import',
+        moduleName,
+        modulePath: modulePathTok.value,
+        line: importTok.line,
+        column: importTok.column,
+      });
+    }
+
+    return imports;
+  }
+
+  /**
+   * Parse export list: экспорт [a, b];
+   */
+  private parseExports(): string[] {
+    this.consume(TokenType.LEFT_BRACKET, 'Expected \'[\' after \'экспорт\'');
+    const exports: string[] = [];
+
+    if (!this.check(TokenType.RIGHT_BRACKET)) {
+      do {
+        const id = this.consume(TokenType.IDENTIFIER, 'Expected exported node identifier').value;
+        exports.push(id);
+      } while (this.match(TokenType.COMMA));
+    }
+
+    this.consume(TokenType.RIGHT_BRACKET, '] expected after export list');
+    this.consume(TokenType.SEMICOLON, 'Expected \';\' after export list');
+
+    return exports;
+  }
+
+  /**
+   * Parse a local or module-qualified target into a raw string.
+   * Examples: идентификатор | @Модуль.ид
+   */
+  private parseTargetString(): string {
+    if (this.match(TokenType.AT)) {
+      const moduleName = this.consume(TokenType.IDENTIFIER, 'Expected module name after @').value;
+      this.consume(TokenType.DOT, 'Expected \'.\' after module name');
+      const nodeId = this.consume(TokenType.IDENTIFIER, 'Expected node identifier after module name').value;
+      return `@${moduleName}.${nodeId}`;
+    }
+    // Local identifier
+    return this.consume(TokenType.IDENTIFIER, 'Expected target identifier').value;
   }
 }

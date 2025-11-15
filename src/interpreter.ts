@@ -6,6 +6,8 @@ import type {
   OptionChoice,
   QuestProgram,
 } from './ast';
+import path from 'node:path';
+import { ModuleLoader } from './module-loader';
 
 /**
  * Runtime state of the quest
@@ -41,14 +43,22 @@ export interface QuestVisitor {
 export class QuestInterpreter {
   private program: QuestProgram;
   private currentState: QuestState;
+  private moduleLoader?: ModuleLoader;
 
-  constructor(program: QuestProgram) {
+  constructor(program: QuestProgram, questFilePath?: string) {
     this.program = program;
     this.currentState = {
       currentNode: program.graph.start,
       history: [],
       isComplete: false,
     };
+
+    // Initialize module loader if imports present and quest file path provided
+    if (questFilePath && program.imports && program.imports.length > 0) {
+      this.moduleLoader = new ModuleLoader(path.dirname(questFilePath));
+      // Load modules
+      this.moduleLoader.loadQuest(questFilePath);
+    }
   }
 
   /**
@@ -81,7 +91,7 @@ export class QuestInterpreter {
    */
   public getCurrentNode(): NodeDefinition | null {
     const nodeId = this.currentState.currentNode;
-    return this.program.graph.nodes[nodeId] || null;
+    return this.resolveNode(nodeId);
   }
 
   /**
@@ -143,7 +153,7 @@ export class QuestInterpreter {
    * Move to a specific node
    */
   public moveToNode(nodeId: string): ExecutionResult {
-    const targetNode = this.program.graph.nodes[nodeId];
+    const targetNode = this.resolveNode(nodeId);
 
     if (!targetNode) {
       return {
@@ -193,7 +203,7 @@ export class QuestInterpreter {
   }
 
   private findPaths(nodeId: string, currentPath: string[], allPaths: string[][], visited: Set<string>): void {
-    const node = this.program.graph.nodes[nodeId];
+    const node = this.resolveNode(nodeId);
 
     if (!node || visited.has(nodeId)) {
       return;
@@ -228,7 +238,7 @@ export class QuestInterpreter {
     const nodeIds = Object.keys(this.program.graph.nodes);
 
     // Check if start node exists
-    if (!this.program.graph.nodes[this.program.graph.start]) {
+    if (!this.resolveNode(this.program.graph.start)) {
       errors.push(`Start node '${this.program.graph.start}' does not exist`);
     }
 
@@ -237,16 +247,36 @@ export class QuestInterpreter {
       if (node.nodeType === 'действие') {
         const actionNode = node as ActionNode;
         for (const option of actionNode.options) {
-          if (!this.program.graph.nodes[option.target]) {
-            errors.push(`Node '${nodeId}' references non-existent target '${option.target}'`);
+          if (!this.resolveNode(option.target)) {
+            if (option.target.startsWith('@') && this.moduleLoader) {
+              const ref = option.target.slice(1);
+              const dot = ref.indexOf('.');
+              const modName = dot >= 0 ? ref.slice(0, dot) : ref;
+              const nid = dot >= 0 ? ref.slice(dot + 1) : '';
+              const check = dot >= 0 ? this.moduleLoader.resolveExport(modName, nid) : { ok: false, error: `Invalid module reference '${option.target}'` } as const;
+              errors.push(check.ok ? `Node '${nodeId}' references non-existent target '${option.target}'` : check.error);
+            }
+            else {
+              errors.push(`Node '${nodeId}' references non-existent target '${option.target}'`);
+            }
           }
         }
       }
       else if (node.nodeType === 'начальный') {
         const initialNode = node as InitialNode;
         for (const transition of initialNode.transitions) {
-          if (!this.program.graph.nodes[transition]) {
-            errors.push(`Initial node '${nodeId}' references non-existent transition '${transition}'`);
+          if (!this.resolveNode(transition)) {
+            if (transition.startsWith('@') && this.moduleLoader) {
+              const ref = transition.slice(1);
+              const dot = ref.indexOf('.');
+              const modName = dot >= 0 ? ref.slice(0, dot) : ref;
+              const nid = dot >= 0 ? ref.slice(dot + 1) : '';
+              const check = dot >= 0 ? this.moduleLoader.resolveExport(modName, nid) : { ok: false, error: `Invalid module reference '${transition}'` } as const;
+              errors.push(check.ok ? `Initial node '${nodeId}' references non-existent transition '${transition}'` : check.error);
+            }
+            else {
+              errors.push(`Initial node '${nodeId}' references non-existent transition '${transition}'`);
+            }
           }
         }
       }
@@ -272,7 +302,7 @@ export class QuestInterpreter {
     if (reachable.has(nodeId))
       return;
 
-    const node = this.program.graph.nodes[nodeId];
+    const node = this.resolveNode(nodeId);
     if (!node)
       return;
 
@@ -290,5 +320,33 @@ export class QuestInterpreter {
         this.findReachableNodes(transition, reachable);
       }
     }
+  }
+
+  /**
+   * Resolve either local node id or module-qualified reference '@Module.node'
+   */
+  private resolveNode(id: string): NodeDefinition | null {
+    // Module-qualified
+    if (id.startsWith('@')) {
+      const ref = id.slice(1);
+      const dot = ref.indexOf('.');
+      if (dot === -1)
+        return null;
+      const moduleName = ref.slice(0, dot);
+      const nodeId = ref.slice(dot + 1);
+
+      if (!this.moduleLoader)
+        return null;
+      const check = this.moduleLoader.resolveExport(moduleName, nodeId);
+      if (!check.ok)
+        return null;
+      const mod = this.moduleLoader.getModuleByName(moduleName);
+      if (!mod)
+        return null;
+      return mod.ast.nodes[nodeId] || null;
+    }
+
+    // Local
+    return this.program.graph.nodes[id] || null;
   }
 }

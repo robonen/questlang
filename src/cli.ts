@@ -122,7 +122,7 @@ class ClackCLI {
       spinner.start('Loading quest...');
 
       const source = this.readFile(filename);
-      const interpreter = QuestLang.interpret(source);
+      const interpreter = QuestLang.interpret(source, filename);
 
       // Validate first
       const validation = interpreter.validate();
@@ -237,7 +237,7 @@ class ClackCLI {
       spinner.start('Validating quest...');
 
       const source = this.readFile(filename);
-      const validation = QuestLang.validate(source);
+      const validation = QuestLang.validate(source, filename);
 
       if (validation.isValid) {
         spinner.stop('✅ Validation completed');
@@ -268,7 +268,7 @@ class ClackCLI {
       spinner.start('Analyzing quest...');
 
       const source = this.readFile(filename);
-      const interpreter = QuestLang.interpret(source);
+      const interpreter = QuestLang.interpret(source, filename);
       const questInfo = interpreter.getQuestInfo();
 
       spinner.stop('✅ Analysis completed');

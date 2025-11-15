@@ -91,7 +91,7 @@ describe('lexer', () => {
   });
 
   it('should throw error on unexpected character', () => {
-    const source = 'квест @';
+    const source = 'квест $';
     const lexer = new Lexer(source);
 
     expect(() => lexer.tokenize()).toThrow('Unexpected character');

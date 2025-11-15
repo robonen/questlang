@@ -20,6 +20,12 @@ export enum TokenType {
   OPTIONS = 'варианты',
   TITLE = 'название',
 
+  // Module system keywords
+  MODULE = 'модуль',
+  IMPORT = 'импорт',
+  EXPORT = 'экспорт',
+  FROM = 'из',
+
   // Node types
   INITIAL = 'начальный',
   ACTION = 'действие',
@@ -30,6 +36,7 @@ export enum TokenType {
   COLON = ':',
   COMMA = ',',
   DOT = '.',
+  AT = '@',
   LEFT_BRACE = '{',
   RIGHT_BRACE = '}',
   LEFT_BRACKET = '[',
@@ -82,6 +89,8 @@ export interface QuestProgram extends ASTNode {
   name: string;
   goal: string;
   graph: GraphNode;
+  // Imports are only used by module-enabled programs; optional for backward compatibility
+  imports?: ImportNode[];
 }
 
 /**
@@ -132,6 +141,7 @@ export interface EndingNode extends NodeDefinition {
 export interface OptionChoice extends ASTNode {
   type: 'OptionChoice';
   text: string;
+  // Target can be a local node id ("узел") or a module-qualified reference ("@Модуль.узел") as a raw string
   target: string;
 }
 
@@ -149,4 +159,33 @@ export interface StringLiteral extends ASTNode {
 export interface Identifier extends ASTNode {
   type: 'Identifier';
   name: string;
+}
+
+/**
+ * Module declaration AST
+ */
+export interface ModuleNode extends ASTNode {
+  type: 'Module';
+  name: string;
+  nodes: Record<string, NodeDefinition>;
+  exports: string[];
+  imports?: ImportNode[];
+}
+
+/**
+ * Import declaration AST
+ */
+export interface ImportNode extends ASTNode {
+  type: 'Import';
+  moduleName: string;
+  modulePath: string; // path in quotes as provided in source
+  alias?: string;
+}
+
+/**
+ * Module reference helper type (not necessarily emitted in AST; we encode as string "@Module.node")
+ */
+export interface ModuleReference {
+  module: string;
+  nodeId: string;
 }
