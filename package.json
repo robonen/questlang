@@ -1,5 +1,6 @@
 {
-  "name": "questlang-interpreter",
+  "name": "questlang",
+  "type": "module",
   "version": "1.0.0",
   "description": "TypeScript interpreter for QuestLang programming language",
   "license": "MIT",
@@ -11,20 +12,27 @@
   ],
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
   "bin": {
     "questlang": "dist/cli.js"
   },
+  "files": [
+    "README.md",
+    "dist",
+    "examples"
+  ],
   "scripts": {
     "build": "tsdown",
     "dev": "vitest",
-    "test": "vitest test",
+    "test": "vitest run",
     "coverage": "vitest --coverage",
     "lint:check": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
-    "type:check": "tsc --noEmit"
+    "type:check": "tsc --noEmit",
+    "prepublish": "pnpm run build && pnpm run type:check && pnpm run test"
   },
   "dependencies": {
     "@clack/prompts": "^0.11.0"
