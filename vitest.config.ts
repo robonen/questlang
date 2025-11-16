@@ -6,7 +6,7 @@ export default defineConfig({
     exclude: ['node_modules', 'dist'],
     coverage: {
       provider: 'v8',
-      exclude: ['src/cli.ts', 'dist/', 'node_modules/']
-    }
+      exclude: ['src/cli.ts', 'dist/', 'node_modules/'],
+    },
   },
 });

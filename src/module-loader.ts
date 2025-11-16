@@ -3,8 +3,8 @@ import { Lexer } from './lexer';
 import { Parser } from './parser';
 
 export interface ModuleHost {
-  readFile(file: string): string;
-  resolve(fromFile: string, specifier: string): string;
+  readFile: (file: string) => string;
+  resolve: (fromFile: string, specifier: string) => string;
 }
 
 export enum VisitState {

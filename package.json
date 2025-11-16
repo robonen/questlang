@@ -35,9 +35,10 @@
     "prepublish": "pnpm run build && pnpm run type:check && pnpm run test"
   },
   "devDependencies": {
-    "@clack/prompts": "^0.11.0",
     "@antfu/eslint-config": "^6.2.0",
+    "@clack/prompts": "^0.11.0",
     "@robonen/tsconfig": "^0.0.2",
+    "eslint": "^9.39.1",
     "tsdown": "^0.16.4",
     "typescript": "^5.9.3",
     "vitest": "^4.0.9"

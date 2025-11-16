@@ -1,6 +1,6 @@
 import type { QuestProgram } from './ast';
-import { QuestInterpreter } from './interpreter';
 import type { ModuleHost } from './module-loader';
+import { QuestInterpreter } from './interpreter';
 import { Lexer } from './lexer';
 import { Parser } from './parser';
 
@@ -46,6 +46,6 @@ export class QuestLang {
 
 export * from './ast';
 export { QuestInterpreter } from './interpreter';
-export type { ModuleHost } from './module-loader';
 export { Lexer } from './lexer';
+export type { ModuleHost } from './module-loader';
 export { Parser } from './parser';

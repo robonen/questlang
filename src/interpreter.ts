@@ -6,8 +6,8 @@ import type {
   OptionChoice,
   QuestProgram,
 } from './ast';
-import { ModuleLoader } from './module-loader';
 import type { ModuleHost } from './module-loader';
+import { ModuleLoader } from './module-loader';
 
 /**
  * Runtime state of the quest
