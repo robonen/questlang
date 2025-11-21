@@ -39,8 +39,8 @@
     "@clack/prompts": "^0.11.0",
     "@robonen/tsconfig": "^0.0.2",
     "eslint": "^9.39.1",
-    "tsdown": "^0.16.4",
+    "tsdown": "^0.16.6",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.9"
+    "vitest": "^4.0.13"
   }
 }
